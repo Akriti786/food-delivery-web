@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import User from "../models/User.js";
 import DeliveryPartner from "../models/DeliveryPartner.js";
 import Order from "../models/Order.js";
+import { getIO } from "../socket.js";
 
 // CREATE DELIVERY PARTNER
 export const createDeliveryPartner = async (req, res) => {
@@ -177,10 +178,24 @@ export const assignOrder = async (req, res) => {
 
         await order.save();
 
+        // Fetch updated order details
+        const updatedOrder = await Order.findById(order._id)
+            .populate("restaurant", "name image address phone deliveryTime")
+            .populate("deliveryPartner", "vehicleType vehicleNumber");
+
+        // Notify only the customer who owns this order
+        const io = getIO();
+
+        io.to(`user:${order.customer.toString()}`).emit(
+            "orderStatusUpdated",
+            updatedOrder
+        );
+
         res.status(200).json({
             message: "Order assigned successfully",
-            order
+            order: updatedOrder
         });
+
 
     } catch (error) {
         console.error(
@@ -276,10 +291,23 @@ export const updateDeliveryOrderStatus = async (req, res) => {
 
         await order.save();
 
+        // Fetch the updated order with related details
+        const updatedOrder = await Order.findById(order._id)
+            .populate("restaurant", "name image address phone deliveryTime")
+            .populate("deliveryPartner", "vehicleType vehicleNumber");
+
+        // Notify the customer about the new status
+        const io = getIO();
+
+        io.to(`user:${order.customer.toString()}`).emit(
+            "orderStatusUpdated",
+            updatedOrder
+        );
+
         res.status(200).json({
             message:
                 `Order status updated to ${orderStatus}`,
-            order
+            order: updatedOrder
         });
 
     } catch (error) {

@@ -1,61 +1,3 @@
-// import { Server } from "socket.io";
-
-// let io;
-
-// export const initSocket = (server) => {
-
-//     io = new Server(server, {
-//         cors: {
-//             origin: [
-//                 "http://localhost:5173",
-//                 "http://localhost:5174",
-//                 "http://localhost:5175",
-//                 "http://localhost:5176"
-//             ],
-//             methods: [
-//                 "GET",
-//                 "POST",
-//                 "PUT",
-//                 "PATCH",
-//                 "DELETE"
-//             ]
-//         }
-//     });
-
-//     io.on("connection", (socket) => {
-
-//         console.log(
-//             "Socket connected:",
-//             socket.id
-//         );
-
-//         socket.on("disconnect", () => {
-
-//             console.log(
-//                 "Socket disconnected:",
-//                 socket.id
-//             );
-
-//         });
-
-//     });
-
-//     return io;
-// };
-
-// export const getIO = () => {
-
-//     if (!io) {
-//         throw new Error(
-//             "Socket.IO has not been initialized"
-//         );
-//     }
-
-//     return io;
-// };
-
-
-
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
 
@@ -88,20 +30,24 @@ export const initSocket = (server) => {
 
         try {
 
-            const token = socket.handshake.auth?.token;
+            const token =
+                socket.handshake.auth?.token;
 
             if (!token) {
 
                 return next(
-                    new Error("Socket authentication required")
+                    new Error(
+                        "Socket authentication required"
+                    )
                 );
 
             }
 
-            const decoded = jwt.verify(
-                token,
-                process.env.JWT_SECRET
-            );
+            const decoded =
+                jwt.verify(
+                    token,
+                    process.env.JWT_SECRET
+                );
 
             const user =
                 await User.findById(
@@ -111,7 +57,9 @@ export const initSocket = (server) => {
             if (!user) {
 
                 return next(
-                    new Error("User not found")
+                    new Error(
+                        "User not found"
+                    )
                 );
 
             }

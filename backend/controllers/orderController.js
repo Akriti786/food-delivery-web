@@ -2,6 +2,7 @@ import Cart from "../models/Cart.js";
 import Order from "../models/Order.js";
 import MenuItem from "../models/MenuItem.js";
 import Restaurant from "../models/Restaurant.js";
+import { getIO } from "../socket.js";
 
 // CREATE ORDER FROM CART
 export const createOrder = async (req, res) => {
@@ -390,10 +391,24 @@ export const updateOrderStatusByRestaurant = async (req, res) => {
 
         await order.save();
 
+        // Fetch the updated order with related details
+        const updatedOrder = await Order.findById(order._id)
+            .populate("restaurant", "name image address phone deliveryTime")
+            .populate("deliveryPartner", "vehicleType vehicleNumber");
+
+        // Send the update to this customer's private room
+        const io = getIO();
+
+        io.to(`user:${order.customer.toString()}`).emit(
+            "orderStatusUpdated",
+            updatedOrder
+        );
+
         res.status(200).json({
             message: `Order status updated to ${orderStatus}`,
-            order
+            order: updatedOrder
         });
+
 
     } catch (error) {
         console.error(

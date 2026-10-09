@@ -6,7 +6,9 @@ import {
 import {
     getMyOrders
 } from "../api/orderApi.js";
-import socket from "../socket.js";
+import socket, {
+    connectSocket
+} from "../socket.js";
 
 const Orders = () => {
 
@@ -98,8 +100,7 @@ const Orders = () => {
 
         fetchOrders();
 
-        socket.connect();
-
+        connectSocket();
 
         socket.on(
             "orderStatusUpdated",
@@ -109,7 +110,6 @@ const Orders = () => {
                     "Order status updated:",
                     updatedOrder
                 );
-
 
                 setOrders(
                     (currentOrders) => {
@@ -139,7 +139,6 @@ const Orders = () => {
 
             }
         );
-
 
         return () => {
 

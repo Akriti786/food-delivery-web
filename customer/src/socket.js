@@ -7,4 +7,26 @@ const socket = io(
     }
 );
 
+export const connectSocket = () => {
+
+    const token =
+        localStorage.getItem("token");
+
+    if (!token) {
+
+        console.log(
+            "No token found. Socket not connected."
+        );
+
+        return;
+
+    }
+
+    socket.auth = {
+        token
+    };
+
+    socket.connect();
+};
+
 export default socket;
