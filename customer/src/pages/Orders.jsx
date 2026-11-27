@@ -10,6 +10,8 @@ import socket, {
     connectSocket
 } from "../socket.js";
 
+import { Link } from "react-router-dom";
+
 const Orders = () => {
 
     // Store customer's orders
@@ -340,6 +342,9 @@ const Orders = () => {
 
                                     </div>
 
+                                    <Link to={`/orders/${order._id}`}>
+                                        View Order Details
+                                    </Link>
 
                                     {/* REJECTED */}
 

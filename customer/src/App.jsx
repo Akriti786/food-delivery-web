@@ -13,6 +13,7 @@ import RestaurantMenu from "./pages/RestaurantMenu.jsx";
 import Cart from "./pages/Cart.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import Orders from "./pages/Orders.jsx";
+import OrderDetails from "./pages/OrderDetails.jsx";
 
 const router = createBrowserRouter([
   {
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
       {
         path: "orders",
         element: <Orders />
+      },
+      {
+        path: "orders/:orderId",
+        element: <OrderDetails />
       }
     ]
   }
